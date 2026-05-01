@@ -18,10 +18,10 @@
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             user-select: none; 
+            -webkit-tap-highlight-color: transparent;
         }
 
         body, html {
-            /* 100dvh is de magic fix voor mobiele adresbalken */
             height: 100%;
             height: 100dvh; 
             width: 100vw;
@@ -61,57 +61,19 @@
             width: 270px;
             border-radius: 14px;
             text-align: center;
-            display: flex;
-            flex-direction: column;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        .ios-alert-content {
-            padding: 20px 16px;
-        }
-
-        .ios-alert-title {
-            font-size: 17px;
-            font-weight: 600;
-            color: #000;
-            margin-bottom: 5px;
-        }
-
-        .ios-alert-text {
-            font-size: 13px;
-            color: #333;
-            line-height: 1.3;
-        }
-
-        .ios-alert-buttons {
-            display: flex;
-            flex-direction: column;
-            border-top: 1px solid rgba(0,0,0,0.2);
-        }
-
-        .ios-alert-btn {
-            background: none;
-            border: none;
-            border-bottom: 1px solid rgba(0,0,0,0.2);
-            padding: 12px;
-            font-size: 17px;
-            color: var(--ios-blue);
-            cursor: pointer;
-        }
-        
-        .ios-alert-btn:last-child {
-            border-bottom: none;
-        }
-
-        .ios-alert-btn.bold {
-            font-weight: 600;
-        }
+        .ios-alert-content { padding: 20px 16px; }
+        .ios-alert-title { font-size: 17px; font-weight: 600; color: #000; margin-bottom: 5px; }
+        .ios-alert-text { font-size: 13px; color: #333; line-height: 1.3; }
+        .ios-alert-buttons { display: flex; flex-direction: column; border-top: 1px solid rgba(0,0,0,0.2); }
+        .ios-alert-btn { background: none; border: none; border-bottom: 1px solid rgba(0,0,0,0.2); padding: 12px; font-size: 17px; color: var(--ios-blue); cursor: pointer; }
+        .ios-alert-btn:last-child { border-bottom: none; }
+        .ios-alert-btn.bold { font-weight: 600; }
 
         /* --- Main UI (SWIPER AREA) --- */
-        #main-screen {
-            overflow: hidden;
-            background-color: black;
-        }
+        #main-screen { overflow: hidden; background-color: black; }
 
         .swiper-container {
             display: flex;
@@ -122,18 +84,27 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
-        .swiper-container::-webkit-scrollbar {
-            display: none;
-        }
+        .swiper-container::-webkit-scrollbar { display: none; }
 
+        /* De slide laat nu verticale scroll toe */
         .swiper-slide {
             flex-shrink: 0;
             width: 100vw;
             height: 100%;
+            overflow-y: auto; /* Zorgt voor scroll naar beneden voor reviews */
+            scroll-snap-align: start;
+            background-color: white;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .hero-section {
+            height: 100vh;
+            height: 100dvh;
+            width: 100%;
             background-size: cover;
             background-position: center;
             position: relative;
-            scroll-snap-align: start;
+            flex-shrink: 0;
         }
 
         .overlay {
@@ -142,6 +113,20 @@
             background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.9) 100%);
         }
 
+        /* --- Info Sheet (De scrollbare content) --- */
+        .info-sheet {
+            padding: 30px 20px;
+            padding-bottom: 150px; /* Ruimte voor transport bar */
+            background: white;
+            color: var(--dark);
+        }
+
+        .description { font-size: 1.1rem; line-height: 1.6; margin-bottom: 30px; color: #444; }
+        .review-card { background: #f9f9f9; padding: 15px; border-radius: 15px; margin-bottom: 15px; }
+        .review-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: bold; }
+        .review-stars { color: #FFD700; }
+
+        /* --- Fixed UI (Blijft staan bij scroll) --- */
         .fixed-ui {
             position: absolute;
             width: 100%;
@@ -151,203 +136,81 @@
             z-index: 10;
         }
 
-        /* --- Top Bar: Personen Selector --- */
         .top-bar {
             position: absolute;
-            top: max(50px, env(safe-area-inset-top)); /* Houdt rekening met iPhone notch */
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
+            top: max(50px, env(safe-area-inset-top));
+            left: 0; right: 0;
+            display: flex; justify-content: center;
             pointer-events: auto;
         }
 
-        .person-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
+        .person-container { display: flex; align-items: center; gap: 15px; }
         .person-display {
             background: rgba(255,255,255,0.95);
             padding: 10px 25px;
             border-radius: 30px;
             font-weight: 800;
             font-size: 1.1rem;
-            color: #000;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            min-width: 140px;
-            text-align: center;
+            min-width: 140px; text-align: center;
         }
+        .icon-circle.small { width: 45px; height: 45px; font-size: 24px; font-weight: bold; color: white; cursor: pointer; pointer-events: auto; background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
-        .icon-circle.small {
-            width: 45px;
-            height: 45px;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            pointer-events: auto;
-        }
-
-        /* --- Restaurant Info --- */
-        .restaurant-info {
+        .restaurant-info-box {
             position: absolute;
-            top: max(140px, calc(env(safe-area-inset-top) + 90px));
+            top: 140px;
             left: 20px;
             color: white;
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* --- Transport Bar --- */
         .transport-bar {
             position: absolute;
-            bottom: max(30px, env(safe-area-inset-bottom)); /* Blijft boven de iPhone streep */
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-around;
+            bottom: max(30px, env(safe-area-inset-bottom));
+            left: 0; right: 0;
+            display: flex; justify-content: space-around;
             padding: 0 10px;
             pointer-events: auto;
         }
 
-        .transport-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: white;
-            gap: 8px;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-
-        .transport-item:active {
-            transform: scale(0.9);
-        }
-
+        .transport-item { display: flex; flex-direction: column; align-items: center; color: white; gap: 8px; cursor: pointer; }
         .icon-circle {
-            width: 60px;
-            height: 60px;
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            width: 65px; height: 65px;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-size: 28px; border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
+        .time-label { font-size: 10pt; font-weight: bold; background: rgba(0,0,0,0.7); padding: 4px 12px; border-radius: 12px; }
 
-        .time-label {
-            font-size: 10pt;
-            font-weight: bold;
-            background: rgba(0,0,0,0.6);
-            padding: 4px 10px;
-            border-radius: 12px;
-        }
+        /* --- Modals & Nav (Onveranderd maar geoptimaliseerd) --- */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: flex-end; }
+        .modal-content { background: white; width: 100%; border-radius: 30px 30px 0 0; padding: 30px; padding-bottom: max(30px, env(safe-area-inset-bottom)); text-align: center; transform: translateY(100%); transition: transform 0.3s ease-out; }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .btn-confirm { background: var(--primary); color: white; border: none; width: 100%; padding: 20px; border-radius: 20px; font-size: 15pt; font-weight: bold; margin-bottom: 15px; }
+        
+        #nav-screen { background: #e5e3df; }
+        .nav-header { background: white; padding: max(50px, env(safe-area-inset-top)) 20px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-map { flex: 1; background-image: url('https://miro.medium.com/v2/resize:fit:1400/1*qV9-p_Z67CB7Zyo8YV5CWA.png'); background-size: cover; background-position: center; position: relative; }
+        .nav-footer { position: absolute; bottom: max(30px, env(safe-area-inset-bottom)); left: 20px; right: 20px; background: var(--primary); color: white; padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; }
 
-        /* --- Modal --- */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 100;
-            justify-content: center;
-            align-items: flex-end;
-        }
-
-        .modal-content {
-            background: white;
-            width: 100%;
-            border-radius: 30px 30px 0 0;
-            padding: 30px;
-            padding-bottom: max(30px, env(safe-area-inset-bottom));
-            text-align: center;
-            transform: translateY(100%);
-            transition: transform 0.3s ease-out;
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-
-        .modal-title {
-            font-size: 18pt;
-            font-weight: 800;
-            margin-bottom: 10px;
-        }
-
-        .modal-detail {
-            color: #666;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        .btn-confirm {
-            background: var(--primary);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 18px;
-            border-radius: 15px;
-            font-size: 14pt;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-
-        .btn-cancel {
-            color: #999;
-            background: none;
-            border: none;
-            font-size: 11pt;
-            cursor: pointer;
-            padding: 10px;
-        }
-
-        /* --- Navigation View --- */
-        #nav-screen {
-            background: #e5e3df;
-        }
-
-        .nav-header {
-            background: white;
-            padding: max(50px, env(safe-area-inset-top)) 20px 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            z-index: 10;
-        }
-
-        .nav-map {
-            flex: 1;
-            background-image: url('https://miro.medium.com/v2/resize:fit:1400/1*qV9-p_Z67CB7Zyo8YV5CWA.png');
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-
-        .nav-footer {
+        .scroll-hint {
             position: absolute;
-            bottom: max(30px, env(safe-area-inset-bottom));
-            left: 20px;
-            right: 20px;
-            background: var(--primary);
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
             color: white;
-            padding: 20px;
-            border-radius: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            font-size: 0.9rem;
+            animation: bounce 2s infinite;
+            opacity: 0.8;
         }
 
-        .res-name {
-            font-size: 1.2em;
-            font-weight: bold;
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+            40% {transform: translateX(-50%) translateY(-10px);}
+            60% {transform: translateX(-50%) translateY(-5px);}
         }
-
     </style>
 </head>
 <body>
@@ -357,29 +220,57 @@
         
         <div class="swiper-container" id="restaurant-swiper">
             <!-- RESTAURANT 1 -->
-            <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&q=80&w=1000');">
-                <div class="overlay"></div>
-                <div class="restaurant-info">
-                    <h1 style="font-size: 28pt; font-weight: 900;">Restaurant De Pijp</h1>
-                    <p style="opacity: 0.9; font-weight: 500;">Franse Bistro • ⭐ 4.8</p>
+            <div class="swiper-slide">
+                <div class="hero-section" style="background-image: url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&q=80&w=1000');">
+                    <div class="overlay"></div>
+                    <div class="scroll-hint">Scroll voor reviews ↓</div>
+                </div>
+                <div class="info-sheet">
+                    <h2>Over De Pijp</h2>
+                    <p class="description">Een authentieke Franse bistro in het hart van Amsterdam. Bekend om hun legendarische Entrecôte en uitgebreide wijnkaart. De sfeer is intiem en levendig.</p>
+                    <h3>Reviews</h3>
+                    <div class="review-card">
+                        <div class="review-header"><span>Jasper S.</span> <span class="review-stars">★★★★★</span></div>
+                        <p>"Binnen 2 klikken een tafel en het eten was waanzinnig. De steak frites is een aanrader!"</p>
+                    </div>
+                    <div class="review-card">
+                        <div class="review-header"><span>Marieke v. D.</span> <span class="review-stars">★★★★☆</span></div>
+                        <p>"Gezellige sfeer, tikkeltje lawaaierig maar dat hoort bij een echte bistro."</p>
+                    </div>
                 </div>
             </div>
 
             <!-- RESTAURANT 2 -->
-            <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1000');">
-                <div class="overlay"></div>
-                <div class="restaurant-info">
-                    <h1 style="font-size: 28pt; font-weight: 900;">Bistro NDSM</h1>
-                    <p style="opacity: 0.9; font-weight: 500;">Modern & Industrieel • ⭐ 4.6</p>
+            <div class="swiper-slide">
+                <div class="hero-section" style="background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1000');">
+                    <div class="overlay"></div>
+                    <div class="scroll-hint">Scroll voor reviews ↓</div>
+                </div>
+                <div class="info-sheet">
+                    <h2>Bistro NDSM</h2>
+                    <p class="description">Industriële vibes aan het IJ. Verse vis en lokale groenten bereid boven open vuur. De perfecte plek voor een rauw randje bij je diner.</p>
+                    <h3>Reviews</h3>
+                    <div class="review-card">
+                        <div class="review-header"><span>Tom B.</span> <span class="review-stars">★★★★★</span></div>
+                        <p>"Wat een uitzicht! En die gegrilde zeebaars was echt top."</p>
+                    </div>
                 </div>
             </div>
 
             <!-- RESTAURANT 3 -->
-            <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=1000');">
-                <div class="overlay"></div>
-                <div class="restaurant-info">
-                    <h1 style="font-size: 28pt; font-weight: 900;">Pasta e Basta</h1>
-                    <p style="opacity: 0.9; font-weight: 500;">Italiaans • ⭐ 4.7</p>
+            <div class="swiper-slide">
+                <div class="hero-section" style="background-image: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=1000');">
+                    <div class="overlay"></div>
+                    <div class="scroll-hint">Scroll voor reviews ↓</div>
+                </div>
+                <div class="info-sheet">
+                    <h2>Pasta e Basta</h2>
+                    <p class="description">Zingende obers en de beste pasta van de stad. Hier kom je niet alleen voor het eten, maar voor de hele show. Italiaans zoals het bedoeld is.</p>
+                    <h3>Reviews</h3>
+                    <div class="review-card">
+                        <div class="review-header"><span>Lisa T.</span> <span class="review-stars">★★★★★</span></div>
+                        <p>"Heerlijke avond gehad, de truffel pasta is om te sterven zo lekker."</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -391,6 +282,11 @@
                     <div class="person-display" id="person-text">2 Personen</div>
                     <div class="icon-circle small" onclick="changePersons(1)">+</div>
                 </div>
+            </div>
+
+            <div class="restaurant-info-box" id="res-info-text">
+                <h1 style="font-size: 28pt; font-weight: 900;">Restaurant De Pijp</h1>
+                <p style="opacity: 0.9; font-weight: 500;">Franse Bistro • ⭐ 4.8</p>
             </div>
 
             <div class="transport-bar">
@@ -425,7 +321,6 @@
             <div class="ios-alert-buttons">
                 <button class="ios-alert-btn bold" onclick="allowGPS()">Sta toe bij gebruik van app</button>
                 <button class="ios-alert-btn" onclick="allowGPS()">Sta eenmaal toe</button>
-                <button class="ios-alert-btn" onclick="alert('Zonder locatie kunnen we geen reistijd berekenen.')">Sta niet toe</button>
             </div>
         </div>
     </div>
@@ -434,8 +329,7 @@
     <div id="booking-modal" class="modal-overlay" onclick="closeBooking()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-title">Tafel Gevonden!</div>
-            <p id="modal-text" class="modal-detail">
-            </p>
+            <p id="modal-text" class="modal-detail"></p>
             <button class="btn-confirm" onclick="confirmBooking()">Bevestig Tafel</button>
             <button class="btn-cancel" onclick="closeBooking()">Niet nu</button>
         </div>
@@ -446,29 +340,23 @@
         <div class="nav-header">
             <div style="display: flex; align-items: center; gap: 15px;">
                 <div style="background: var(--ios-blue); color: white; padding: 10px; border-radius: 10px;">⬆️</div>
-                <div>
-                    <div style="font-weight: bold; font-size: 14pt;">Loop 200m rechtdoor</div>
-                    <div style="color: #666;">Hobbemakade, Amsterdam</div>
-                </div>
+                <div><div style="font-weight: bold; font-size: 14pt;">Loop 200m rechtdoor</div><div style="color: #666;">Hobbemakade, Amsterdam</div></div>
             </div>
         </div>
         <div class="nav-map">
             <div style="position: absolute; top: 40%; left: 45%; font-size: 30px;">🔵</div>
             <div class="nav-footer">
-                <div>
-                    <div class="res-name" id="nav-res-name">Restaurant De Pijp</div>
-                    <div style="font-size: 0.9em; opacity: 0.8;">Aankomst om 19:07</div>
-                </div>
-                <div style="font-size: 1.5em; font-weight: bold;" id="nav-res-time">6 min</div>
+                <div><div class="res-name" id="nav-res-name">Restaurant De Pijp</div><div style="font-size: 0.9em; opacity: 0.8;">Aankomst om 19:07</div></div>
+                <div style="font-size: 1.5em; font-weight: bold;">6 min</div>
             </div>
         </div>
     </div>
 
     <script>
         const restaurantsData = [
-            { name: 'Restaurant De Pijp', walk: '6 min', bike: '2 min', car: '5 min', ov: '8 min' },
-            { name: 'Bistro NDSM', walk: '25 min', bike: '12 min', car: '20 min', ov: '18 min' },
-            { name: 'Pasta e Basta', walk: '12 min', bike: '4 min', car: '9 min', ov: '6 min' }
+            { name: 'Restaurant De Pijp', sub: 'Franse Bistro • ⭐ 4.8', walk: '6 min', bike: '2 min', car: '5 min', ov: '8 min' },
+            { name: 'Bistro NDSM', sub: 'Modern & Industrieel • ⭐ 4.6', walk: '25 min', bike: '12 min', car: '20 min', ov: '18 min' },
+            { name: 'Pasta e Basta', sub: 'Italiaans • ⭐ 4.7', walk: '12 min', bike: '4 min', car: '9 min', ov: '6 min' }
         ];
 
         let currentRestaurantIndex = 0;
@@ -478,13 +366,7 @@
             currentPersons += amount;
             if (currentPersons < 1) currentPersons = 1; 
             if (currentPersons > 12) currentPersons = 12; 
-            
-            const textElement = document.getElementById('person-text');
-            if (currentPersons === 1) {
-                textElement.innerText = "1 Persoon";
-            } else {
-                textElement.innerText = currentPersons + " Personen";
-            }
+            document.getElementById('person-text').innerText = currentPersons + (currentPersons === 1 ? " Persoon" : " Personen");
         }
 
         const swiper = document.getElementById('restaurant-swiper');
@@ -492,58 +374,45 @@
             const index = Math.round(swiper.scrollLeft / window.innerWidth);
             if (index !== currentRestaurantIndex && index < restaurantsData.length) {
                 currentRestaurantIndex = index;
-                updateTransportTimes(currentRestaurantIndex);
+                const data = restaurantsData[index];
+                document.getElementById('time-walk').innerText = data.walk;
+                document.getElementById('time-bike').innerText = data.bike;
+                document.getElementById('time-car').innerText = data.car;
+                document.getElementById('time-ov').innerText = data.ov;
+                document.getElementById('res-info-text').innerHTML = `<h1 style="font-size: 28pt; font-weight: 900;">${data.name}</h1><p style="opacity: 0.9; font-weight: 500;">${data.sub}</p>`;
+                
+                // Reset scroll van alle slides bij swipe
+                document.querySelectorAll('.swiper-slide').forEach((slide, i) => {
+                    if(i !== index) slide.scrollTop = 0;
+                });
             }
         });
 
-        function updateTransportTimes(index) {
-            const data = restaurantsData[index];
-            document.getElementById('time-walk').innerText = data.walk;
-            document.getElementById('time-bike').innerText = data.bike;
-            document.getElementById('time-car').innerText = data.car;
-            document.getElementById('time-ov').innerText = data.ov;
-        }
+        // Effect voor het vervagen van de tekst bij verticaal scrollen
+        document.querySelectorAll('.swiper-slide').forEach(slide => {
+            slide.addEventListener('scroll', (e) => {
+                const opacity = Math.max(0, 1 - (slide.scrollTop / 300));
+                document.getElementById('res-info-text').style.opacity = opacity;
+                document.getElementById('res-info-text').style.transform = `translateY(-${slide.scrollTop * 0.5}px)`;
+            });
+        });
 
-        function allowGPS() {
-            document.getElementById('ios-gps-overlay').style.display = 'none';
-            updateTransportTimes(0);
-        }
+        function allowGPS() { document.getElementById('ios-gps-overlay').style.display = 'none'; }
+        function closeBooking() { const modal = document.getElementById('booking-modal'); modal.classList.remove('active'); setTimeout(() => modal.style.display = 'none', 300); }
 
         function openBooking(type) {
-            const restaurant = restaurantsData[currentRestaurantIndex];
-            const typeKey = getTransportKey(type);
-            const tijd = restaurant[typeKey];
-
-            const persoonTekst = currentPersons === 1 ? "1 persoon" : currentPersons + " personen";
-
-            document.getElementById('modal-text').innerHTML = 
-                `<b>${restaurant.name}</b> heeft een tafel voor ${persoonTekst} vrij.<br>Je reistijd is <b>${tijd} (${type})</b>. Je tafel staat over ${parseInt(tijd)+1} min klaar.`;
-            
+            const res = restaurantsData[currentRestaurantIndex];
+            const time = res[type === 'Wandelen' ? 'walk' : type === 'Fietsen' ? 'bike' : type === 'Auto' ? 'car' : 'ov'];
+            document.getElementById('modal-text').innerHTML = `<b>${res.name}</b> heeft een tafel voor ${currentPersons} ${currentPersons === 1 ? 'persoon' : 'personen'} vrij.<br>Reistijd: <b>${time} (${type})</b>.`;
             const modal = document.getElementById('booking-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('active'), 10);
         }
 
-        function getTransportKey(type) {
-            if(type === 'Wandelen') return 'walk';
-            if(type === 'Fietsen') return 'bike';
-            if(type === 'Auto') return 'car';
-            if(type === 'OV') return 'ov';
-            return 'walk';
-        }
-
-        function closeBooking() {
-            const modal = document.getElementById('booking-modal');
-            modal.classList.remove('active');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-
         function confirmBooking() {
             closeBooking();
-            const restaurant = restaurantsData[currentRestaurantIndex];
-            document.getElementById('nav-res-name').innerText = restaurant.name;
-            
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('nav-res-name').innerText = restaurantsData[currentRestaurantIndex].name;
+            document.getElementById('main-screen').classList.remove('active');
             document.getElementById('nav-screen').classList.add('active');
         }
     </script>
