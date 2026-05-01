@@ -1,17 +1,11 @@
-from weasyprint import HTML
-import base64
-
-# Het HTML/CSS/JS pakket voor prototype V3
-html_content = """
 <!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>2Clicks2Eat - Prototype V3</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>2Clicks2Eat</title>
     <style>
         :root {
-            /* Nieuwe premium 'Cherry Red' kleur ipv oranje */
             --primary: #E63946; 
             --dark: #1A1A1A;
             --white: #FFFFFF;
@@ -23,12 +17,14 @@ html_content = """
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            /* Voorkom tekst selecteren bij snel klikken op + en - */
             user-select: none; 
         }
 
         body, html {
+            /* 100dvh is de magic fix voor mobiele adresbalken */
             height: 100%;
+            height: 100dvh; 
+            width: 100vw;
             overflow: hidden;
             background-color: var(--dark);
         }
@@ -36,8 +32,8 @@ html_content = """
         /* --- Screens --- */
         .screen {
             display: none;
-            height: 100vh;
-            width: 100vw;
+            height: 100%;
+            width: 100%;
             position: relative;
         }
 
@@ -158,7 +154,7 @@ html_content = """
         /* --- Top Bar: Personen Selector --- */
         .top-bar {
             position: absolute;
-            top: 50px;
+            top: max(50px, env(safe-area-inset-top)); /* Houdt rekening met iPhone notch */
             left: 0;
             right: 0;
             display: flex;
@@ -191,12 +187,13 @@ html_content = """
             font-weight: bold;
             color: white;
             cursor: pointer;
+            pointer-events: auto;
         }
 
         /* --- Restaurant Info --- */
         .restaurant-info {
             position: absolute;
-            top: 140px;
+            top: max(140px, calc(env(safe-area-inset-top) + 90px));
             left: 20px;
             color: white;
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
@@ -205,12 +202,12 @@ html_content = """
         /* --- Transport Bar --- */
         .transport-bar {
             position: absolute;
-            bottom: 40px;
+            bottom: max(30px, env(safe-area-inset-bottom)); /* Blijft boven de iPhone streep */
             left: 0;
             right: 0;
             display: flex;
             justify-content: space-around;
-            padding: 0 20px;
+            padding: 0 10px;
             pointer-events: auto;
         }
 
@@ -267,6 +264,7 @@ html_content = """
             width: 100%;
             border-radius: 30px 30px 0 0;
             padding: 30px;
+            padding-bottom: max(30px, env(safe-area-inset-bottom));
             text-align: center;
             transform: translateY(100%);
             transition: transform 0.3s ease-out;
@@ -307,6 +305,7 @@ html_content = """
             border: none;
             font-size: 11pt;
             cursor: pointer;
+            padding: 10px;
         }
 
         /* --- Navigation View --- */
@@ -316,7 +315,7 @@ html_content = """
 
         .nav-header {
             background: white;
-            padding: 50px 20px 20px;
+            padding: max(50px, env(safe-area-inset-top)) 20px 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             z-index: 10;
         }
@@ -331,7 +330,7 @@ html_content = """
 
         .nav-footer {
             position: absolute;
-            bottom: 30px;
+            bottom: max(30px, env(safe-area-inset-bottom));
             left: 20px;
             right: 20px;
             background: var(--primary);
@@ -341,6 +340,7 @@ html_content = """
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
         .res-name {
@@ -352,10 +352,9 @@ html_content = """
 </head>
 <body>
 
-    <!-- SCREEN 1: Main (Startscherm, is nu altijd de basis) -->
+    <!-- SCREEN 1: Main -->
     <div id="main-screen" class="screen active">
         
-        <!-- De Scrollbare Restaurant Container -->
         <div class="swiper-container" id="restaurant-swiper">
             <!-- RESTAURANT 1 -->
             <div class="swiper-slide" style="background-image: url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&q=80&w=1000');">
@@ -385,9 +384,7 @@ html_content = """
             </div>
         </div>
 
-        <!-- Gefixte UI elementen (knoppen over de foto heen) -->
         <div class="fixed-ui">
-            <!-- Nieuwe Top Bar met + en - knoppen -->
             <div class="top-bar">
                 <div class="person-container">
                     <div class="icon-circle small" onclick="changePersons(-1)">-</div>
@@ -418,7 +415,7 @@ html_content = """
 
     </div>
 
-    <!-- NATIVE iOS STYLE GPS POP-UP (Overlay direct over main screen) -->
+    <!-- GPS POP-UP -->
     <div id="ios-gps-overlay">
         <div class="ios-alert">
             <div class="ios-alert-content">
@@ -433,19 +430,18 @@ html_content = """
         </div>
     </div>
 
-    <!-- MODAL (The Confirmation) -->
+    <!-- MODAL -->
     <div id="booking-modal" class="modal-overlay" onclick="closeBooking()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-title">Tafel Gevonden!</div>
             <p id="modal-text" class="modal-detail">
-                <!-- Text wordt dynamisch gevuld -->
             </p>
             <button class="btn-confirm" onclick="confirmBooking()">Bevestig Tafel</button>
             <button class="btn-cancel" onclick="closeBooking()">Niet nu</button>
         </div>
     </div>
 
-    <!-- SCREEN 2: Navigation (In-App) -->
+    <!-- NAV SCREEN -->
     <div id="nav-screen" class="screen">
         <div class="nav-header">
             <div style="display: flex; align-items: center; gap: 15px;">
@@ -476,13 +472,12 @@ html_content = """
         ];
 
         let currentRestaurantIndex = 0;
-        let currentPersons = 2; // Default aantal personen
+        let currentPersons = 2;
 
-        // Aantal personen wijzigen via + en - knoppen
         function changePersons(amount) {
             currentPersons += amount;
-            if (currentPersons < 1) currentPersons = 1; // Minimaal 1
-            if (currentPersons > 12) currentPersons = 12; // Maximaal 12
+            if (currentPersons < 1) currentPersons = 1; 
+            if (currentPersons > 12) currentPersons = 12; 
             
             const textElement = document.getElementById('person-text');
             if (currentPersons === 1) {
@@ -492,7 +487,6 @@ html_content = """
             }
         }
 
-        // Swipe logica
         const swiper = document.getElementById('restaurant-swiper');
         swiper.addEventListener('scroll', () => {
             const index = Math.round(swiper.scrollLeft / window.innerWidth);
@@ -510,7 +504,6 @@ html_content = """
             document.getElementById('time-ov').innerText = data.ov;
         }
 
-        // Haal de GPS overlay weg
         function allowGPS() {
             document.getElementById('ios-gps-overlay').style.display = 'none';
             updateTransportTimes(0);
@@ -521,7 +514,6 @@ html_content = """
             const typeKey = getTransportKey(type);
             const tijd = restaurant[typeKey];
 
-            // Maak tekst dynamisch op basis van het gekozen aantal personen
             const persoonTekst = currentPersons === 1 ? "1 persoon" : currentPersons + " personen";
 
             document.getElementById('modal-text').innerHTML = 
@@ -557,7 +549,3 @@ html_content = """
     </script>
 </body>
 </html>
-"""
-
-with open("2clicks2eat-prototype-v3.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
